@@ -16,16 +16,14 @@ fn main() {
         .subscribe(&[Subscription::Window])
         .expect("Failed to subscribe to the i3 IPC interface");
 
-    for event in listener.listen() {
-        match event {
-            Ok(event) => match event {
-                Event::WindowEvent(e) => {
-                    if let Err(err) = do_a_split(&mut connection, &e.container) {
-                        eprintln!("{}", err)
-                    }
+    for event_result in listener.listen() {
+        match event_result {
+            Ok(Event::WindowEvent(e)) => {
+                if let Err(err) = do_a_split(&mut connection, &e.container) {
+                    eprintln!("{}", err);
                 }
-                _ => unreachable!(),
-            },
+            }
+            Ok(_) => {}
             Err(err) => eprintln!("{}", err),
         }
     }
